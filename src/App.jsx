@@ -9,6 +9,7 @@ import { Body } from './layouts/Body/Body.jsx';
 import { JournalForm } from './components/JournalForm/JournalForm.jsx';
 
 import './App.css';
+import { Button } from './components/Button/Button.jsx';
 
 function App() {
 	const data = [
@@ -30,6 +31,7 @@ function App() {
 				<Header />
 				<JournalAddButton />
 				<JournalList>
+					{[<Button>1</Button>, <Button>2</Button>]}
 					<CardButton>
 						<JournalItem
 							title={data[0].title}
