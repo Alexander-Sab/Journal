@@ -4,7 +4,7 @@ import './JournalAddButton.css';
 export function JournalAddButton() {
 	return (
 		<CardButton className="journal-add">
-			<img className="plus" src="/public/Plus.svg" alt="plus" />
+			<img className="plus" src="/plus.svg" alt="plus" />
 			Новое воспоминание
 		</CardButton>
 	);

@@ -4,42 +4,65 @@ import { Button } from '../Button/Button.jsx';
 
 import './JournalForm.css';
 
-export function JournalForm() {
-	const [inputData, setInputData] = useState('');
-	const [state, setState] = useState({
-		age: 31
+export function JournalForm({ onSubmit }) {
+	const [formValidState, setFormValidState] = useState({
+		title: true,
+		post: true,
+		date: true
 	});
-	const [state2, setState2] = useState([1, 2, 3]);
 
-	const inputChange = (event) => {
-		setInputData(event.target.value);
-		console.log(inputData);
-	};
 	const addJournalItem = (e) => {
 		e.preventDefault();
-		state.age = 40;
-		setState({ ...state });
-
-		state2.push(4);
-		setState2([...state2]);
 		const formData = new FormData(e.target);
 		const formProps = Object.fromEntries(formData);
-		console.log(formProps);
+		let isFormValid = true;
+		if (!formProps.title?.trim().length) {
+			setFormValidState((state) => ({ ...state, title: false }));
+			isFormValid = false;
+		} else {
+			setFormValidState((state) => ({ ...state, title: true }));
+		}
+
+		if (!formProps.post?.trim().length) {
+			setFormValidState((state) => ({ ...state, post: false }));
+			isFormValid = false;
+		} else {
+			setFormValidState((state) => ({ ...state, post: true }));
+		}
+
+		if (!formProps.date) {
+			setFormValidState((state) => ({ ...state, date: false }));
+			isFormValid = false;
+		} else {
+			setFormValidState((state) => ({ ...state, date: true }));
+		}
+		if (!isFormValid) {
+			return;
+		}
+
+		onSubmit(formProps);
 	};
 	return (
 		<form className="journal-form" onSubmit={addJournalItem}>
-			{state.age}
-			{state2.length}
-			<input type="text" name="title" />
-			<input type="date" name="date" />
-			<input type="text" name="tag" value={inputData} onChange={inputChange} />
-			<textarea name="post" id="" cols="30" rows="10" />
-			<Button
-				text="Сохранить"
-				onClick={() => {
-					console.log('Нажали');
-				}}
+			<input
+				type="text"
+				name="title"
+				className={`input ${formValidState.title ? '' : 'invalid'}`}
 			/>
+			<input
+				type="date"
+				name="date"
+				className={`input ${formValidState.date ? '' : 'invalid'}`}
+			/>
+			<input type="text" name="tag" />
+			<textarea
+				name="post"
+				id=""
+				cols="30"
+				rows="10"
+				className={`input ${formValidState.post ? '' : 'invalid'}`}
+			/>
+			<Button text="Сохранить" />
 		</form>
 	);
 }
