@@ -1,6 +1,6 @@
 import { CardButton } from '../CardButton/CardButton';
 import { JournalItem } from '../Journalltem/Journalltem';
-import './JournalList.css';
+import './JournalList.module.css';
 
 export function JournalList({ items }) {
 	if (items.length === 0) {

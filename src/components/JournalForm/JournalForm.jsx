@@ -49,7 +49,7 @@ export function JournalForm({ onSubmit }) {
 				name="title"
 				className={`${styles.input} ${
 					formValidState.title ? '' : styles.invalid
-				}}`}
+				}`}
 			/>
 			<input
 				type="date"
