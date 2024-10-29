@@ -1,8 +1,8 @@
-import './Button.css';
+import styles from './Button.module.css';
 
 export function Button({ text, onClick }) {
 	return (
-		<button className="button accent" onClick={onClick}>
+		<button className={`${styles.button} ${styles.accent}`} onClick={onClick}>
 			{text}
 		</button>
 	);
