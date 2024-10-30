@@ -22,7 +22,6 @@ export function JournalList({ items }) {
 					<JournalItem title={el.title} text={el.text} date={el.date} />
 				</CardButton>
 			))}
-			;
 		</>
 	);
 }

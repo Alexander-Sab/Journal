@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import cn from 'classnames';
 
 import { Button } from '../Button/Button.jsx';
 
@@ -44,29 +45,53 @@ export function JournalForm({ onSubmit }) {
 	};
 	return (
 		<form className={styles['journal-form']} onSubmit={addJournalItem}>
-			<input
-				type="text"
-				name="title"
-				className={`${styles.input} ${
-					formValidState.title ? '' : styles.invalid
-				}`}
-			/>
-			<input
-				type="date"
-				name="date"
-				className={`${styles.input} ${
-					formValidState.date ? '' : styles.invalid
-				}`}
-			/>
-			<input type="text" name="tag" />
+			<div>
+				<input
+					type="text"
+					name="title"
+					className={cn(styles['input-title'], {
+						[styles.invalid]: !formValidState.title
+					})}
+				/>
+			</div>
+			<div className={styles['form-row']}>
+				<label htmlFor="date" className={styles['form-label']}>
+					<img
+						src="/date.svg"
+						alt="icon date"
+						className={styles['icon-date']}
+					/>
+					<span>Дата</span>
+				</label>
+				<input
+					type="date"
+					name="date"
+					id="date"
+					className={cn(styles['input'], styles['input-date'], {
+						[styles.invalid]: !formValidState.date
+					})}
+					onClick={(e) => {
+						if (e.target.type === 'date' && e.target === e.currentTarget) {
+							e.target.showPicker();
+						}
+					}}
+				/>
+			</div>
+			<div className={styles['form-row']}>
+				<label htmlFor="tag" className={styles['form-label']}>
+					<img src="/folder.svg" alt="icon folder" />
+					<span>Метки</span>
+				</label>
+				<input type="text" id="tag" name="tag" className={styles['input']} />
+			</div>
 			<textarea
 				name="post"
 				id=""
 				cols="30"
 				rows="10"
-				className={`${styles.input} ${
-					formValidState.post ? '' : styles.invalid
-				}`}
+				className={cn(styles['input'], {
+					[styles.invalid]: !formValidState.post
+				})}
 			/>
 			<Button text="Сохранить" />
 		</form>
