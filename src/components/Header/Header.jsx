@@ -1,9 +1,9 @@
-import './Header.css';
+import styles from './Header.module.css';
 
 export function Header() {
 	return (
 		<>
-			<img className="logo" src="/Logo2.svg" alt="Magazine logo" />
+			<img className={styles.logo} src="/Group.svg" alt="Magazine logo" />
 		</>
 	);
 }
