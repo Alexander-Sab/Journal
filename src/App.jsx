@@ -1,40 +1,50 @@
-import { useState } from 'react';
-
 import { LeftPanel } from './layouts/LeftPanel/LeftPanel.jsx';
 import { Header } from './components/Header/Header.jsx';
 import { JournalList } from './components/JournalList/JournalList.jsx';
 import { JournalAddButton } from './components/JournalAddButton/JournalAddButton.jsx';
 import { Body } from './layouts/Body/Body.jsx';
 import { JournalForm } from './components/JournalForm/JournalForm.jsx';
+import { useLocalStorage } from './hooks/use-localstorage.hooks.js';
 
 import styles from './App.module.css';
 
-const INITIAL_DATA = [
-	// {
-	// 	id: 1,
-	// 	title: 'Подготовка к обновлениею курса',
-	// 	date: new Date(),
-	// 	text: 'Горные походы открывают удивительные природные ландшафты'
-	// },
-	// {
-	// 	id: 2,
-	// 	title: 'Поход в горы',
-	// 	date: new Date(),
-	// 	text: 'Думал что, что очень много времени'
-	// }
-];
+// const INITIAL_DATA = [
+// 	{
+// 		id: 1,
+// 		title: 'Подготовка к обновлениею курса',
+// 		date: new Date(),
+// 		text: 'Горные походы открывают удивительные природные ландшафты'
+// 	},
+// 	{
+// 		id: 2,
+// 		title: 'Поход в горы',
+// 		date: new Date(),
+// 		text: 'Думал что, что очень много времени'
+// 	}
+// ];
+
+function mapItems(items) {
+	if (!items) {
+		return [];
+	}
+	return items.map((i) => ({ ...i, date: new Date(i.date) }));
+}
 
 function App() {
-	const [items, setItems] = useState(INITIAL_DATA);
+	const [items, setItems] = useLocalStorage(['data']);
+
 	const addItems = (item) => {
-		setItems((oldItems) => [
-			...oldItems,
+		setItems([
+			...mapItems(items),
 
 			{
-				text: item.text,
+				post: item.post,
 				title: item.title,
 				date: new Date(item.date),
-				id: oldItems.length > 0 ? Math.max(...oldItems.map((i) => i.id)) + 1 : 1
+				id:
+					items.length > 0
+						? Math.max(...items.map((i) => i.id)) + 1
+						: 1
 			}
 		]);
 	};
@@ -44,7 +54,7 @@ function App() {
 			<LeftPanel>
 				<Header />
 				<JournalAddButton />
-				<JournalList items={items}></JournalList>
+				<JournalList items={mapItems(items)}></JournalList>
 			</LeftPanel>
 
 			<Body>
