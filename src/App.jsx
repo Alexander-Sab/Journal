@@ -5,23 +5,9 @@ import { JournalAddButton } from './components/JournalAddButton/JournalAddButton
 import { Body } from './layouts/Body/Body.jsx';
 import { JournalForm } from './components/JournalForm/JournalForm.jsx';
 import { useLocalStorage } from './hooks/use-localstorage.hooks.js';
+import { UserContextProvider } from './context/user.context.jsx';
 
 import styles from './App.module.css';
-
-// const INITIAL_DATA = [
-// 	{
-// 		id: 1,
-// 		title: 'Подготовка к обновлениею курса',
-// 		date: new Date(),
-// 		text: 'Горные походы открывают удивительные природные ландшафты'
-// 	},
-// 	{
-// 		id: 2,
-// 		title: 'Поход в горы',
-// 		date: new Date(),
-// 		text: 'Думал что, что очень много времени'
-// 	}
-// ];
 
 function mapItems(items) {
 	if (!items) {
@@ -31,36 +17,38 @@ function mapItems(items) {
 }
 
 function App() {
-	const [items, setItems] = useLocalStorage(['data']);
+	const [items, setItems] = useLocalStorage('data', []);
 
 	const addItems = (item) => {
+		const validItems = Array.isArray(items) ? items : []; // Проверка на массив
 		setItems([
-			...mapItems(items),
+			...mapItems(validItems),
 
 			{
-				post: item.post,
-				title: item.title,
+				...item,
 				date: new Date(item.date),
 				id:
-					items.length > 0
-						? Math.max(...items.map((i) => i.id)) + 1
+					validItems.length > 0
+						? Math.max(...validItems.map((i) => i.id)) + 1
 						: 1
 			}
 		]);
 	};
 
 	return (
-		<div className={styles.app}>
-			<LeftPanel>
-				<Header />
-				<JournalAddButton />
-				<JournalList items={mapItems(items)}></JournalList>
-			</LeftPanel>
+		<UserContextProvider>
+			<div className={styles.app}>
+				<LeftPanel>
+					<Header />
+					<JournalAddButton />
+					<JournalList items={mapItems(items)}></JournalList>
+				</LeftPanel>
 
-			<Body>
-				<JournalForm onSubmit={addItems} />
-			</Body>
-		</div>
+				<Body>
+					<JournalForm onSubmit={addItems} />
+				</Body>
+			</div>
+		</UserContextProvider>
 	);
 }
 

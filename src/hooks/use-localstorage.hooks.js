@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
 
-export function useLocalStorage(key) {
-	const [data, setData] = useState();
+// Функция useLocalStorage теперь принимает начальное значение
+export function useLocalStorage(key, initialValue) {
+	const [data, setData] = useState(() => {
+		const res = JSON.parse(localStorage.getItem(key));
+		// Если res не null, возвращаем его, иначе возвращаем initialValue
+		return res !== null ? res : initialValue;
+	});
 
 	useEffect(() => {
 		const res = JSON.parse(localStorage.getItem(key));
-		if (res) {
+		if (res !== null) {
 			setData(res);
 		}
-	}, []);
+	}, [key]);
 
 	const saveData = (newData) => {
 		localStorage.setItem(key, JSON.stringify(newData));
