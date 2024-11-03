@@ -134,7 +134,7 @@ export function JournalForm({ onSubmit }) {
 					[styles.invalid]: !isValid.post
 				})}
 			/>
-			<Button text="Сохранить" />
+			<Button>Сохранить</Button>
 		</form>
 	);
 }
