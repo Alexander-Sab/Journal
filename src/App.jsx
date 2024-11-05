@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { LeftPanel } from './layouts/LeftPanel/LeftPanel.jsx';
 import { Header } from './components/Header/Header.jsx';
 import { JournalList } from './components/JournalList/JournalList.jsx';
@@ -5,23 +7,9 @@ import { JournalAddButton } from './components/JournalAddButton/JournalAddButton
 import { Body } from './layouts/Body/Body.jsx';
 import { JournalForm } from './components/JournalForm/JournalForm.jsx';
 import { useLocalStorage } from './hooks/use-localstorage.hooks.js';
+import { UserContextProvider } from './context/user.context.jsx';
 
 import styles from './App.module.css';
-
-// const INITIAL_DATA = [
-// 	{
-// 		id: 1,
-// 		title: 'Подготовка к обновлениею курса',
-// 		date: new Date(),
-// 		text: 'Горные походы открывают удивительные природные ландшафты'
-// 	},
-// 	{
-// 		id: 2,
-// 		title: 'Поход в горы',
-// 		date: new Date(),
-// 		text: 'Думал что, что очень много времени'
-// 	}
-// ];
 
 function mapItems(items) {
 	if (!items) {
@@ -31,36 +19,62 @@ function mapItems(items) {
 }
 
 function App() {
-	const [items, setItems] = useLocalStorage(['data']);
+	const [items, setItems] = useLocalStorage('data', []);
+	const [selectedItem, setSelectedItem] = useState(null);
 
 	const addItems = (item) => {
-		setItems([
-			...mapItems(items),
+		const validItems = Array.isArray(items) ? items : []; // Проверка на массив
+		if (!item.id) {
+			setItems([
+				...mapItems(validItems),
 
-			{
-				post: item.post,
-				title: item.title,
-				date: new Date(item.date),
-				id:
-					items.length > 0
-						? Math.max(...items.map((i) => i.id)) + 1
-						: 1
-			}
-		]);
+				{
+					...item,
+					date: new Date(item.date),
+					id:
+						validItems.length > 0
+							? Math.max(...validItems.map((i) => i.id)) + 1
+							: 1
+				}
+			]);
+		} else {
+			setItems([
+				...mapItems(items).map((i) => {
+					if (i.id === item.id) {
+						return { ...item };
+					}
+					return i;
+				})
+			]);
+		}
+	};
+
+	const deleteItem = (id) => {
+		setItems([...mapItems(items).filter((i) => i.id !== id)]);
+		setSelectedItem({});
 	};
 
 	return (
-		<div className={styles.app}>
-			<LeftPanel>
-				<Header />
-				<JournalAddButton />
-				<JournalList items={mapItems(items)}></JournalList>
-			</LeftPanel>
+		<UserContextProvider>
+			<div className={styles.app}>
+				<LeftPanel>
+					<Header />
+					<JournalAddButton clearForm={() => setSelectedItem(null)} />
+					<JournalList
+						items={mapItems(items)}
+						setItem={setSelectedItem}
+					></JournalList>
+				</LeftPanel>
 
-			<Body>
-				<JournalForm onSubmit={addItems} />
-			</Body>
-		</div>
+				<Body>
+					<JournalForm
+						onSubmit={addItems}
+						data={selectedItem}
+						onDelete={deleteItem}
+					/>
+				</Body>
+			</div>
+		</UserContextProvider>
 	);
 }
 

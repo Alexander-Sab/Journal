@@ -1,11 +1,6 @@
 import styles from './Journalltem.module.css';
 
-export function JournalItem({ title, date, text }) {
-	// const formattedDate = new Intl.DateTimeFormat('ru-RU', {
-	// 	day: '2-digit',
-	// 	month: '2-digit',
-	// 	year: 'numeric'
-	// }).format(date);
+export function JournalItem({ title, post, date }) {
 	return (
 		<>
 			<h2 className={styles['journal-item__header']}>{title}</h2>
@@ -13,7 +8,7 @@ export function JournalItem({ title, date, text }) {
 				<div className={styles['journal-item__date']}>
 					{date.toLocaleString()}
 				</div>
-				<div className={styles['journal-item__text']}>{text}</div>
+				<div className={styles['journal-item__text']}>{post}</div>
 			</h2>
 		</>
 	);
