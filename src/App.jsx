@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { LeftPanel } from './layouts/LeftPanel/LeftPanel.jsx';
 import { Header } from './components/Header/Header.jsx';
 import { JournalList } from './components/JournalList/JournalList.jsx';
@@ -18,21 +20,38 @@ function mapItems(items) {
 
 function App() {
 	const [items, setItems] = useLocalStorage('data', []);
+	const [selectedItem, setSelectedItem] = useState(null);
 
 	const addItems = (item) => {
 		const validItems = Array.isArray(items) ? items : []; // Проверка на массив
-		setItems([
-			...mapItems(validItems),
+		if (!item.id) {
+			setItems([
+				...mapItems(validItems),
 
-			{
-				...item,
-				date: new Date(item.date),
-				id:
-					validItems.length > 0
-						? Math.max(...validItems.map((i) => i.id)) + 1
-						: 1
-			}
-		]);
+				{
+					...item,
+					date: new Date(item.date),
+					id:
+						validItems.length > 0
+							? Math.max(...validItems.map((i) => i.id)) + 1
+							: 1
+				}
+			]);
+		} else {
+			setItems([
+				...mapItems(items).map((i) => {
+					if (i.id === item.id) {
+						return { ...item };
+					}
+					return i;
+				})
+			]);
+		}
+	};
+
+	const deleteItem = (id) => {
+		setItems([...mapItems(items).filter((i) => i.id !== id)]);
+		setSelectedItem({});
 	};
 
 	return (
@@ -40,12 +59,19 @@ function App() {
 			<div className={styles.app}>
 				<LeftPanel>
 					<Header />
-					<JournalAddButton />
-					<JournalList items={mapItems(items)}></JournalList>
+					<JournalAddButton clearForm={() => setSelectedItem(null)} />
+					<JournalList
+						items={mapItems(items)}
+						setItem={setSelectedItem}
+					></JournalList>
 				</LeftPanel>
 
 				<Body>
-					<JournalForm onSubmit={addItems} />
+					<JournalForm
+						onSubmit={addItems}
+						data={selectedItem}
+						onDelete={deleteItem}
+					/>
 				</Body>
 			</div>
 		</UserContextProvider>
